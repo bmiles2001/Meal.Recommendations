@@ -1,0 +1,12 @@
+﻿<SelectedItemWrapper Class="@Class" BadgeIcon="@BadgeIcon" BadgeColor="@BadgeColor" @bind-Selected:get="@Selected" @bind-Selected:set="@SelectedChanged">
+    <MudText HtmlTag="div" Align="Align.Center" Style="font-size: 0.9em;">@DisplayText</MudText>
+</SelectedItemWrapper>
+
+@code {
+    [Parameter] public Color BadgeColor { get; set; }
+    [Parameter] public string? BadgeIcon { get; set; }
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public required string DisplayText { get; set; }
+    [Parameter] public bool Selected { get; set; }
+    [Parameter] public EventCallback<bool> SelectedChanged { get; set; }
+}

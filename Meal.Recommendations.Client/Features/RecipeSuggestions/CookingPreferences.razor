@@ -1,0 +1,46 @@
+﻿<MudText Typo="Typo.h5">Preferred cooking method</MudText>
+
+<MudStack Row Spacing="4" Wrap="Wrap.Wrap">
+
+	@foreach (KeyValuePair<string, string> device in _cookingDevices)
+	{
+		<PreferenceSelection Class="pa-3"
+								BadgeColor="Color.Success"
+								BadgeIcon="@Icons.Material.Filled.Check"
+								DisplayText="@device.Key"
+								Selected="@IsSelected(device.Key)"
+								SelectedChanged="selected => OnSelectedChanged(device.Key, selected)" />
+	}
+</MudStack>
+
+@code {
+	[Parameter, EditorRequired] public required IEnumerable<string> SelectedDevices { get; set; }
+	[Parameter] public EventCallback<IEnumerable<string>> SelectedDevicesChanged { get; set; }
+
+	private Dictionary<string, string> _cookingDevices = new()
+		{
+			["Air Fryer"] = Icons.Material.Filled.Air,
+			["Oven"] = Icons.Material.Filled.Kitchen,
+			["Grill"] = Icons.Material.Filled.OutdoorGrill,
+			["Stove"] = Icons.Material.Filled.HeatPump,
+			["Microwave"] = Icons.Material.Filled.Microwave
+		};
+
+	private bool IsSelected(string cookingDevice) => SelectedDevices.Contains(cookingDevice);
+
+	private void OnSelectedChanged(string cookingDevice, bool isSelected) => InvokeAsync(async () =>
+	{
+		IEnumerable<string> changes = [];
+
+		if (isSelected)
+		{
+			changes = SelectedDevices.Append(cookingDevice);
+		}
+		else
+		{
+			changes = SelectedDevices.Except([cookingDevice]);
+		}
+
+		await SelectedDevicesChanged.InvokeAsync(changes);
+	});
+}

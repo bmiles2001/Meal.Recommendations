@@ -1,0 +1,17 @@
+﻿<MudText Typo="Typo.h5">Profiles</MudText>
+
+<MudStack Row>
+	@foreach (MealSuggestion.Profile profile in State.Request.Profiles)
+	{
+		<MealProfileButton Text="@profile.Name" OnDeleteClicked="() => DeleteClicked(profile)" OnEditClicked="() => EditClicked(profile.Id)" />
+	}
+</MudStack>
+
+@code {
+	[Inject] public required MealSuggestion.State State { get; set; }
+	[Inject] public required NavigationManager NavigationManager { get; set; }
+
+	public void EditClicked(Guid profileId) => NavigationManager.NavigateTo($"/edit-profile/{profileId}");
+
+	public void DeleteClicked(MealSuggestion.Profile profile) => State.DeleteProfile(profile);
+}

@@ -1,0 +1,78 @@
+﻿<MudText Typo="Typo.h5">Proteins</MudText>
+
+<MudStack Row Spacing="4" Wrap="Wrap.Wrap" Class="@Class">
+
+	@foreach (KeyValuePair<string, string> animalProtein in _animalProteins)
+	{
+		<PreferenceSelection Class="pa-3"
+							 BadgeColor="Color.Success"
+							 BadgeIcon="@Icons.Material.Filled.Check"
+							 DisplayText="@animalProtein.Key"
+							 Selected="@IsSelected(animalProtein.Key)"
+							 SelectedChanged="selected => OnSelectedChanged(animalProtein.Key, selected)" />
+	}
+
+	@foreach (KeyValuePair<string, string> plantProtein in _plantProteins)
+	{
+		<PreferenceSelection Class="pa-3"
+							 BadgeColor="Color.Success"
+							 BadgeIcon="@Icons.Material.Filled.Check"
+							 DisplayText="@plantProtein.Key"
+							 Selected="@IsSelected(plantProtein.Key)"
+							 SelectedChanged="selected => OnSelectedChanged(plantProtein.Key, selected)" />
+	}
+</MudStack>
+
+@code {
+
+	[Parameter] public string? Class { get; set; }
+	[Parameter, EditorRequired] public required IEnumerable<string> SelectedProteins { get; set; }
+	[Parameter] public EventCallback<IEnumerable<string>> SelectedProteinsChanged { get; set; }
+
+	private Dictionary<string, string> _animalProteins = new()
+		{
+			["Chicken"] = Icons.Material.Filled.Fastfood,
+			["Beef"] = Icons.Material.Filled.SetMeal,
+			["Pork"] = Icons.Material.Filled.Restaurant,
+			["Turkey"] = Icons.Material.Filled.FoodBank,
+			["Lamb"] = Icons.Material.Filled.Dining,
+			["Fish"] = Icons.Material.Filled.Sailing, // Best available icon for fish
+			["Shrimp"] = Icons.Material.Filled.Sailing, // Using sailing icon for seafood
+			["Crab"] = Icons.Material.Filled.SetMeal,
+			["Lobster"] = Icons.Material.Filled.RestaurantMenu,
+			["Eggs"] = Icons.Material.Filled.Egg
+		};
+
+
+	private Dictionary<string, string> _plantProteins = new()
+		{
+			["Tofu"] = Icons.Material.Filled.FoodBank,
+			["Tempeh"] = Icons.Material.Filled.Restaurant,
+			["Lentils"] = Icons.Material.Filled.Spa,
+			["Chickpeas"] = Icons.Material.Filled.SetMeal,
+			["Black Beans"] = Icons.Material.Filled.BubbleChart,
+			["Edamame"] = Icons.Material.Filled.Nature,
+			["Quinoa"] = Icons.Material.Filled.Grain,
+			["Seitan"] = Icons.Material.Filled.LocalDining,
+			["Peas"] = Icons.Material.Filled.Nature,
+			["Hemp seeds"] = Icons.Material.Filled.Spa // Used Spa as a placeholder for seeds
+		};
+
+	private bool IsSelected(string protein) => SelectedProteins.Contains(protein);
+
+	private void OnSelectedChanged(string protein, bool isSelected) => InvokeAsync(async () =>
+	{
+		IEnumerable<string> changes = [];
+
+		if (isSelected)
+		{
+			changes = SelectedProteins.Append(protein);
+		}
+		else
+		{
+			changes = SelectedProteins.Except([protein]);
+		}
+
+		await SelectedProteinsChanged.InvokeAsync(changes);
+	});
+}

@@ -1,0 +1,28 @@
+﻿@if (_areyouSure)
+{
+	<DeleteWithConfirmation OnCancel="@ToggleSelection" OnConfirmation="@ConfirmDelete" ConfirmationText="@_confirmationText" />
+}
+else
+{
+	<ProfileButton Class="@Class" StartIcon="@Icons.Material.Filled.Edit" StartIconClicked="@OnEditClicked" Text="@Text" CloseIconClicked="@ToggleSelection" />
+}
+
+@code {
+
+	bool _areyouSure;
+
+	[Parameter] public string? Class { get; set; }
+	[Parameter] public EventCallback OnDeleteClicked { get; set; }
+	[Parameter] public EventCallback OnEditClicked { get; set; }
+	[Parameter, EditorRequired] public required string Text { get; set; }
+
+	private string _confirmationText => $"Delete the profile: {Text}";
+
+	public async Task ConfirmDelete()
+	{
+		await OnDeleteClicked.InvokeAsync();
+		ToggleSelection();
+	}
+
+	public void ToggleSelection() => _areyouSure = !_areyouSure;
+}

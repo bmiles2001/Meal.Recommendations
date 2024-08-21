@@ -1,0 +1,50 @@
+﻿<MudText Typo="Typo.h5">Food Allergies</MudText>
+
+<MudStack Row Spacing="4" Wrap="Wrap.Wrap" Class="@Class">
+	@foreach (KeyValuePair<string, string> allergy in _allergies)
+	{
+		<PreferenceSelection Class="pa-3"
+							 BadgeColor="Color.Warning"
+							 BadgeIcon="@Icons.Material.Filled.LocalHospital"
+							 DisplayText="@allergy.Key"
+							 Selected="@IsSelected(allergy.Key)"
+							 SelectedChanged="selected => OnSelectedChanged(allergy.Key, selected)" />
+	}
+</MudStack>
+
+@code {
+
+	[Parameter] public string? Class { get; set; }
+	[Parameter, EditorRequired] public required IEnumerable<string> SelectedAllergies { get; set; }
+	[Parameter] public EventCallback<IEnumerable<string>> SelectedAllergiesChanged { get; set; }
+
+	private Dictionary<string, string> _allergies = new()
+		{
+			["Peanuts"] = "mdi-peanut-outline",
+			["Shellfish"] = Icons.Material.Filled.PanoramaFishEye,
+			["Milk"] = Icons.Material.Filled.LocalDrink,
+			["Eggs"] = Icons.Material.Filled.Egg,
+			["Tree Nuts"] = Icons.Material.Filled.Spa,
+			["Wheat"] = Icons.Material.Filled.Grass,
+			["Soy"] = Icons.Material.Filled.Agriculture,
+			["Fish"] = "mdi-fish"
+		};
+
+	private bool IsSelected(string allergy) => SelectedAllergies.Contains(allergy);
+
+	private void OnSelectedChanged(string allergy, bool isSelected) => InvokeAsync(async () =>
+	{
+		IEnumerable<string> changes = [];
+
+		if (isSelected)
+		{
+			changes = SelectedAllergies.Append(allergy);
+		}
+		else
+		{
+			changes = SelectedAllergies.Except([allergy]);
+		}
+
+		await SelectedAllergiesChanged.InvokeAsync(changes);
+	});
+}

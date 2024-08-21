@@ -1,0 +1,44 @@
+﻿@page "/results"
+
+<PageTitle>View Recipe Suggestions</PageTitle>
+
+<MudText Class="pb-2" Typo="Typo.h5">View Recipe Suggestions</MudText>
+
+<LoadingIndicator IsLoading="_isLoading">
+	<MudStack AlignItems="AlignItems.Center">
+		@foreach (MealSuggestion.Result suggestion in MealResults)
+		{
+			<MudCard Elevation="3" Outlined>
+				<MudCardHeader Style="justify-content: center;">
+					<ImagePlaceholder />
+				</MudCardHeader>
+				<MudCardContent Style="border-top: 1px solid var(--mud-palette-text-primary);">
+					<MudText Typo="Typo.h5">@suggestion.Title</MudText>
+					<MudText Typo="Typo.body2">@suggestion.Description</MudText>
+				</MudCardContent>
+			</MudCard>
+		}
+	</MudStack>
+</LoadingIndicator>
+
+@code {
+
+	[Inject] public required ISuggestionApi Api { get; set; }
+	[Inject] public required MealSuggestion.State State { get; set; }
+
+	public IEnumerable<MealSuggestion.Result> MealResults { get; set; } = [];
+	private bool _isLoading;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			_isLoading = true;
+			MealResults = await Api.GetMealSuggestions(State.Request) ?? [];
+			_isLoading = false;
+			StateHasChanged();
+		}
+
+		await base.OnAfterRenderAsync(firstRender);
+	}
+}

@@ -1,0 +1,17 @@
+﻿<MudTextField @bind-Value:get="@Value" @bind-Value:set="@ValueChanged"
+			  Label="@Label"
+			  Variant="Variant.Outlined"
+			  Margin="Margin.Dense"
+			  Adornment="Adornment.End"
+			  AdornmentIcon="@Icon"
+			  Immediate
+			  Required
+			  RequiredError="We need something here..."
+			  AdornmentAriaLabel="@Label" />
+
+@code {
+	[Parameter, EditorRequired] public required string Value { get; set; }
+	[Parameter] public EventCallback<string> ValueChanged { get; set; }
+	[Parameter] public string? Label { get; set; }
+	[Parameter] public string? Icon { get; set; }
+}

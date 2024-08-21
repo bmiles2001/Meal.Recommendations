@@ -1,0 +1,34 @@
+﻿@page "/add-profile"
+
+<PageTitle>Add Profile</PageTitle>
+
+<EditForm Model="_profile" OnValidSubmit="@SaveTasteProfile">
+	<DataAnnotationsValidator />
+	<ValidationSummary />
+
+	<TasteProfile @bind-Profile="_profile" />
+
+	<MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
+	<MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="@CancelClicked">Cancel</MudButton>
+</EditForm>
+
+@code {
+
+	[Inject] public required NavigationManager NavigationManager { get; set; }
+	[Inject] public required MealSuggestion.State State { get; set; }
+
+	public const string ReturnUrl = "/";
+
+	private MealSuggestion.Profile _profile = new();
+
+	public void SaveTasteProfile()
+	{
+		State.SaveProfile(_profile);
+		NavigationManager.NavigateTo(ReturnUrl);
+	}
+
+	public void CancelClicked()
+	{
+		NavigationManager.NavigateTo(ReturnUrl);
+	}
+}

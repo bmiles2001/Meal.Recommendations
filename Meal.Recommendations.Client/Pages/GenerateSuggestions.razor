@@ -1,0 +1,49 @@
+﻿@page "/"
+@implements IDisposable
+
+<PageTitle>New Recommendation</PageTitle>
+
+<MudPaper Elevation="3">
+    We are looking to generate meal suggestions that are tailored towards your situation. In order to better achieve this, we need to accomplish a few things.
+
+    <ol>
+        <li>What are we using to cook with?</li>
+        <li>Add a profile!</li>
+        <li>Generate Recommendations</li>
+    </ol>
+</MudPaper>
+
+@if (State.Request.Profiles.Any())
+{
+    <ProfileList />
+}
+
+<CookingPreferences SelectedDevices="State.Request.CookingDevices" SelectedDevicesChanged="State.SetCookingDevices" />
+
+<MudStack Class="pt-3">
+    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.AddBox" IconColor="Color.Success" Size="Size.Small" OnClick="@AddNewProfile">Add new profile</MudButton>
+    <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="@CreateRecommendation" Disabled="!_hasTasteProfiles">Generate Recommendation</MudButton>
+</MudStack>
+
+@code {
+
+    [Inject] public required NavigationManager NavigationManager { get; set; }
+    [Inject] public required MealSuggestion.State State { get; set; }
+
+    public const string AddProfile = "/add-profile";
+    public const string MealProfileResults = "/results";
+
+    private bool _hasTasteProfiles => State.Request.Profiles.Any();
+    private void AddNewProfile() => NavigationManager.NavigateTo(AddProfile);
+    private void CreateRecommendation() => NavigationManager.NavigateTo(MealProfileResults);
+
+    protected override void OnInitialized()
+    {
+        State.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= StateHasChanged;
+    }
+}

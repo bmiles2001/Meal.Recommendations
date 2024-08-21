@@ -1,0 +1,24 @@
+﻿<MudPaper Outlined Class="pa-3" Style="border-color: yellow;">
+	<MudStack AlignItems="AlignItems.Center">
+
+		@if (ConfirmationText is not null)
+		{
+			<MudText Typo="Typo.subtitle2">@ConfirmationText</MudText>
+		}
+
+		<MudStack Row Justify="Justify.Center" Spacing="3">
+			<MudButton Variant="Variant.Filled" Color="@DeleteButtonColor" OnClick="@OnConfirmation" Size="Size.Small">@DeleteButtonText</MudButton>
+			<MudButton Variant="Variant.Filled" Color="@CancelButtonColor" OnClick="@OnCancel" Size="Size.Small">Cancel</MudButton>
+		</MudStack>
+	</MudStack>
+</MudPaper>
+
+@code {
+	[Parameter] public Color CancelButtonColor { get; set; } = Color.Secondary;
+	[Parameter] public string? ConfirmationText { get; set; }
+	[Parameter] public string? DeleteButtonText { get; set; } = "Remove";
+	[Parameter] public Color DeleteButtonColor { get; set; } = Color.Error;
+
+	[Parameter, EditorRequired] public required EventCallback OnConfirmation { get; set; }
+	[Parameter, EditorRequired] public required EventCallback OnCancel { get; set; }
+}

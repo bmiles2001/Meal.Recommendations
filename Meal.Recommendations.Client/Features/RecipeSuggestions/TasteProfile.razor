@@ -1,0 +1,22 @@
+﻿<MudText Typo="Typo.subtitle2">Who are these preferences for?</MudText>
+<PreferenceInput Icon="@Icons.Material.Filled.ScreenShare" Label="Name" @bind-Value="@_profile.Name" @bind-Value:after="@OnProfileChanged" />
+
+<FoodAllergy @bind-SelectedAllergies="@_profile.Allergies" Class="pb-3" @bind-SelectedAllergies:after="@OnProfileChanged" />
+<Proteins @bind-SelectedProteins="@_profile.Proteins" Class="pb-3" @bind-SelectedProteins:after="@OnProfileChanged" />
+
+@code {
+	[Parameter] public required MealSuggestion.Profile Profile { get; set; }
+	[Parameter] public EventCallback<MealSuggestion.Profile> ProfileChanged { get; set; }
+
+	private MealSuggestion.Profile _profile = new();
+
+	protected override void OnParametersSet()
+	{
+		_profile = Profile;
+	}
+
+	private async Task OnProfileChanged()
+	{
+		await ProfileChanged.InvokeAsync(_profile);
+	}
+}

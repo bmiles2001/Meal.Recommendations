@@ -1,0 +1,58 @@
+﻿<MudPaper Class="@GetButtonCss()" Elevation="3" Style="height:fit-content">
+	<MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center" Class="pa-3">
+
+		@if (StartIcon is not null)
+		{
+			<MudIcon Icon="@StartIcon" Class="cursor-pointer" @onclick="@StartIconClicked" />
+		}
+
+		<MudText>@Text</MudText>
+
+		@if (CloseIcon is not null)
+		{
+			<MudIcon Icon="@CloseIcon" Class="cursor-pointer" @onclick="@CloseIconClicked" />
+		}
+
+	</MudStack>
+</MudPaper>
+
+@code {
+
+	/*
+	<MudChip T="string"
+			Class="@Class"
+			CloseIcon="@CloseIcon"
+			Color="Color.Surface"
+			Label="true"
+			Icon="@StartIcon"
+			OnClick="@StartIconClicked"
+			OnClose="@OnClose"
+			Size="@Size"
+			Text="@Text" />
+		*/
+
+	[Parameter] public string? Class { get; set; }
+	[Parameter] public string? CloseIcon { get; set; } = Icons.Material.Filled.Delete;
+	[Parameter] public EventCallback CloseIconClicked { get; set; }
+	[Parameter] public Size Size { get; set; } = Size.Large;
+	[Parameter] public string? StartIcon { get; set; }
+	[Parameter] public EventCallback StartIconClicked { get; set; }
+	[Parameter, EditorRequired] public required string Text { get; set; }
+
+	public async Task OnClose(MudChip<string> chip)
+	{
+		await CloseIconClicked.InvokeAsync();
+	}
+
+	private string GetButtonCss()
+	{
+		List<string> css = ["d-inline-block", "cursor-default", ""];
+
+		if (!string.IsNullOrEmpty(Class))
+		{
+			css.Add(Class);
+		}
+
+		return string.Join(" ", css);
+	}
+}

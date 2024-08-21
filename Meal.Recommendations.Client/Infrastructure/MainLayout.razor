@@ -1,0 +1,16 @@
+﻿@inherits LayoutComponentBase
+
+<MealThemeProvider />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+	<MudDrawerContainer>
+		<MudMainContent>
+			<MudContainer MaxWidth="MaxWidth.Medium">
+				@Body
+			</MudContainer>
+		</MudMainContent>
+	</MudDrawerContainer>
+</MudLayout>

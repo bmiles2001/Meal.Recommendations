@@ -1,0 +1,49 @@
+﻿@page "/edit-profile/{id:guid}"
+
+<PageTitle>Edit Profile for @_profile.Name</PageTitle>
+
+<EditForm Model="_profile" OnValidSubmit="@SaveTasteProfile">
+	<DataAnnotationsValidator />
+	<ValidationSummary />
+
+	<TasteProfile @bind-Profile="_profile" />
+
+	<MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" ButtonType="ButtonType.Submit">Update</MudButton>
+	<MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="@CancelClicked">Cancel</MudButton>
+</EditForm>
+
+@code {
+
+	[Inject] public required NavigationManager NavigationManager { get; set; }
+	[Inject] public required MealSuggestion.State State { get; set; }
+	[Parameter] public required Guid Id { get; set; }
+
+	public const string ReturnUrl = "/";
+
+	private MealSuggestion.Profile _profile = new();
+
+	protected override Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			_profile = State.Request.Profiles.FirstOrDefault(profile => profile.Id == Id)!;
+			StateHasChanged();
+		}
+
+		return base.OnAfterRenderAsync(firstRender);
+	}
+
+	public void SaveTasteProfile()
+	{
+		if (_profile is not null)
+		{
+			State.SaveProfile(_profile);
+			NavigationManager.NavigateTo(ReturnUrl);
+		}
+	}
+
+	public void CancelClicked()
+	{
+		NavigationManager.NavigateTo(ReturnUrl);
+	}
+}

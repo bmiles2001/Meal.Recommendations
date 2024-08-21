@@ -1,0 +1,43 @@
+﻿@if (Selected)
+{
+    <MudBadge Class="position-absolute" Color="@BadgeColor" Icon="@BadgeIcon" Overlap>
+        <MudPaper Class="@GetSelectionCss()" @onclick="@ToggleSelection" Elevation="3" Outlined="@Selected">
+            @ChildContent
+        </MudPaper>
+    </MudBadge>
+}
+else
+{
+    <MudPaper Class="@GetSelectionCss()" @onclick="@ToggleSelection" Elevation="3" Outlined="@Selected">
+        @ChildContent
+    </MudPaper>
+}
+
+
+@code {
+    [Parameter] public Color BadgeColor { get; set; }
+    [Parameter] public required string BadgeIcon { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public required bool Selected { get; set; }
+    [Parameter] public EventCallback<bool> SelectedChanged { get; set; }
+
+    public async Task ToggleSelection() => await SelectedChanged.InvokeAsync(!Selected);
+
+    public string GetSelectionCss()
+    {
+        List<string> css = ["rounded", "cursor-pointer"];
+
+        if (Selected)
+        {
+            css.Add("mud-border-tertiary");
+        }
+
+        if (!string.IsNullOrEmpty(Class))
+        {
+            css.Add(Class);
+        }
+
+        return string.Join(" ", css);
+    }
+}
